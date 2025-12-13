@@ -10,7 +10,7 @@
     // 요청 본문(JSON) 읽기
     $input = file_get_contents("php://input");
     $data = json_decode($input, true);
-    $propmt = $data['prompt'] ?? '';
+    $prompt = $data['prompt'] ?? '';
 
     if(!$api_key) {
         http_response_code(500);
@@ -18,11 +18,14 @@
         exit;
     }
 
-    if(!$propmt) {
+    if(!$prompt) {
         http_response_code(400);
         echo json_encode(["error" => "No prompt provided"]);
         exit;
     }
+
+    // Gemini API 요청
+    $url = "https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key={$api_key}";
 
     $body = [
         "contents" => [
@@ -46,7 +49,7 @@
 
     // 요청 전송
     $context = stream_context_create($options);
-    $response = @file_get_contents($url, false, $context)
+    $response = @file_get_contents($url, false, $context);
 
     if($response === false) {
         http_response_code(500);
