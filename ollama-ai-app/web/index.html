@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Local Ollama Chatbot</title>
+    <style>
+      body {
+        font-family: sans-serif;
+        max-width: 600px;
+        margin: 40px auto;
+      }
+      #chat {
+        border: 1px solid #ccc;
+        padding: 10px;
+        height: 400px;
+        overflow-y: auto;
+      }
+      .message {
+        margin: 5px 0;
+      }
+      .user {
+        font-weight: bold;
+        color: #007bff;
+      }
+      .bot {
+        color: #333;
+      }
+    </style>
+  </head>
+  <body>
+    <h2>Local AI Chatbot (Docker + PHP)</h2>
+    <div id="chat"></div>
+    <input
+      type="text"
+      id="prompt"
+      placeholder="메시지를 입력하세요."
+      style="width: 80%"
+    />
+    <button id="send">보내기</button>
+
+    <script>
+      document.getElementById("send").addEventListener("click", async () => {
+        const input = document.getElementById("prompt");
+        const chat = document.getElementById("chat");
+        const text = input.value.trim();
+        if (!text) return;
+
+        chat.innerHTML += `<div class="message user">${text}</div>`;
+        input.value = "";
+
+        const res = await fetch("chat.php", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ prompt: text }),
+        });
+
+        const data = await res.json();
+
+        if (data.response) {
+          chat.innerHTML += `<div class="message bot">${data.response}</div>`;
+        } else {
+          chat.innerHTML += `<div class="message bot">오류 발생</div>`;
+        }
+        chat.scrollTop = chat.scrollHeight;
+      });
+    </script>
+  </body>
+</html>
