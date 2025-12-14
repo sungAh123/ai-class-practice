@@ -1,0 +1,19 @@
+version: "3.9"
+services:
+  ollama: ollama/ollama:latest
+  container_name: ollama
+  ports:
+    - "11434:11434"
+  volumes:
+    - ./ollama-data:/root/.ollama
+
+  # PHP 웹 서버
+  php-web:
+    image: php:8.2-apache
+    container_name: php-web
+    ports:
+      - "8080:80" # 브라우저 접속 포트
+    volumes:
+      - ./web:/var/www/html:cached # ./web 디렉토리를 Apache 웹 루트로 매핑
+    depends_on:
+      - ollama # ollama가 먼저 올라오도록 설정
