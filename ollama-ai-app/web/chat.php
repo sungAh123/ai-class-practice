@@ -5,6 +5,7 @@
   $input = json_decode(file_get_contents('php://input'), true);
   $prompt = $input['prompt'] ?? '';
 
+  // 프롬포트 확인
   if(empty($prompt)) {
     echo json_encode(['error' => 'No prompt provided']);
     exit;
@@ -21,11 +22,12 @@
   $options = [
     'http' => [
         'method' => 'POST',
-        'header' => 'Content-Type: application/json\r\n',
+        'header' => "Content-Type: application/json\r\n",
         'content' => $data
     ]
 ];
 
+// 요청 전송
 $context = stream_context_create($options);
 $response = file_get_contents(
     'http://ollama:11434/api/generate',
@@ -33,6 +35,13 @@ $response = file_get_contents(
     $context
 );
 
+// 응답 실패 처리
+if ($response === false) {
+    http_response_code(500);
+    echo json_encode(["error" => "Failed to connect to Ollama API"]);
+    exit;
+}
+
 // 그대로 클라이언트로 반환
-echo $response
+echo $response;
     
