@@ -39,31 +39,6 @@
     />
     <button id="send">보내기</button>
 
-    <script>
-      document.getElementById("send").addEventListener("click", async () => {
-        const input = document.getElementById("prompt");
-        const chat = document.getElementById("chat");
-        const text = input.value.trim();
-        if (!text) return;
-
-        chat.innerHTML += `<div class="message user">${text}</div>`;
-        input.value = "";
-
-        const res = await fetch("chat.php", {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ prompt: text }),
-        });
-
-        const data = await res.json();
-
-        if (data.response) {
-          chat.innerHTML += `<div class="message bot">${data.response}</div>`;
-        } else {
-          chat.innerHTML += `<div class="message bot">오류 발생</div>`;
-        }
-        chat.scrollTop = chat.scrollHeight;
-      });
-    </script>
+    <script src="chat.js"></script>
   </body>
 </html>
